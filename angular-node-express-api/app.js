@@ -13,7 +13,7 @@ app.get('/getCollection', (req, res)=>{
     res.json(loadJSON('../tree.json'))
 });
 
-app.get('/getCollectionById/:id', (req, res)=>{
+app.get('/getItemById/:id', (req, res)=>{
     var id = req.params.id;
     var data= loadJSON('../collection.json')['collection'];
     for (let collection of data) {

@@ -19,4 +19,8 @@ export class AppServiceService {
   getCollectionById(id){
     return this.http.get('api/getCollectionById/:'+id);
   }
+
+  updateItem(id){
+    return null;
+  }
 }
