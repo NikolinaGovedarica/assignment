@@ -70,8 +70,22 @@ export class TreeComponent{
   }
 
   getData(){
-    this.service.getCollection().subscribe((response)=>{
-      this.collection = response as ArtNode;
+    if(localStorage.getItem("collection") === null){
+      this.service.getCollection().subscribe((response)=>{
+        this.collection = response as ArtNode;
+        this.TREE_NODE = [this.collection];
+        this.ALL_TREE_NODE = [this.collection];
+        this.takePotteries(this.TREE_NODE);
+        this.takePaintings(this.TREE_NODE);
+        this.dataSource.data=this.TREE_NODE;
+        console.log(this.POTTERY_TREE_NODE);
+        console.log(this.PAINTING_TREE_NODE);
+        localStorage.setItem("collection",JSON.stringify(response));
+      }, (error)=>{
+        console.log('Error is ', error);
+      })
+    }else{
+      this.collection = JSON.parse(localStorage.getItem("collection")) as ArtNode;
       this.TREE_NODE = [this.collection];
       this.ALL_TREE_NODE = [this.collection];
       this.takePotteries(this.TREE_NODE);
@@ -79,10 +93,8 @@ export class TreeComponent{
       this.dataSource.data=this.TREE_NODE;
       console.log(this.POTTERY_TREE_NODE);
       console.log(this.PAINTING_TREE_NODE);
-
-    }, (error)=>{
-      console.log('Error is ', error);
-    })
+    }
+    
   }
 
    hasChild = (_: number, node: FlatNode) => node.expandable;
@@ -151,15 +163,32 @@ export class TreeComponent{
       if(!(this.oldNode === undefined || this.oldNode === null)){
         document.getElementById(this.oldNode.id).style.color= 'black';
       }
-      this.service.getCollectionById(node.id).subscribe((res)=>{
-        this.item = res as Item;
+      if(localStorage.getItem("collection"+node.id) === null){
+        console.log("nije local storage za by id");
+      this.service.getCollectionById(node.id).subscribe((response)=>{
+        console.log('Collection id='+ node.id + ' is: '+ JSON.stringify(response));
+        localStorage.setItem('collection'+node.id,JSON.stringify(response));
+        this.item = response as Item;
         console.log('Item', this.item);
         this.itemClicked = true;
         //this.nodeClicked.backgroudColor("blue");
         console.log(node);
         this.changeColor(node.id);
         this.oldNode = node as FlatNode;
-      });
+      },(error)=>{
+        console.log('Error is ', error);
+      }
+      )
+    }else{
+      this.item = JSON.parse(localStorage.getItem('collection'+node.id)) as Item;
+        console.log('Item', this.item);
+        this.itemClicked = true;
+        //this.nodeClicked.backgroudColor("blue");
+        console.log(node);
+        this.changeColor(node.id);
+        this.oldNode = node as FlatNode;
+    }
+    
     }
 
   }

@@ -28,21 +28,34 @@ export class AppComponent implements OnInit{
   }
 
   getCollectionFromAPI(){
-    this.service.getCollection().subscribe((response)=>{
-      console.log('Collections are: ', response)
-      this.collection = response;
-    }, (error)=>{
-      console.log('Error is ', error);
-    })
+    if(localStorage.getItem("collection") === null){
+      console.log('nije local storage');
+      this.service.getCollection().subscribe((response)=>{
+        console.log('Collections are: ', response)
+        localStorage.setItem("collection",JSON.stringify(response));
+        this.collection = response;
+      }, (error)=>{
+        console.log('Error is ', error);
+      })
+    }else{
+      this.collection = localStorage.getItem("collection");
+    }
+    
   }
 
   getCollectionByIdFromAPI(id){
-    this.service.getCollectionById(id).subscribe((response)=>{
-      console.log('Collection id='+ id + ' is: '+ response);
-    },(error)=>{
-      console.log('Error is ', error);
+    if(localStorage.getItem("collection"+id) === null){
+      this.service.getCollectionById(id).subscribe((response)=>{
+        console.log('Collection id='+ id + ' is: '+ response);
+        localStorage.setItem('collection'+id,JSON.stringify(response));
+      },(error)=>{
+        console.log('Error is ', error);
+      }
+      )
+    }else{
+      localStorage.getItem('collection'+id);
     }
-    )
+    
   }
 
   updateItem(id){
