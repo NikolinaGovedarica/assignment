@@ -10,14 +10,16 @@ app.get('/getData', (req, res)=>{
 });
 
 app.get('/getCollection', (req, res)=>{
-    res.json(loadJSON('../tree.json'))
+    res.send(loadJSON('../tree.json'));
 });
 
 app.get('/getItemById/:id', (req, res)=>{
-    var id = req.params.id;
+    var id = req.params.id.toString();
+    var idS = id.substr(1,id.length);
+    console.log(idS);
     var data= loadJSON('../collection.json')['collection'];
     for (let collection of data) {
-        if (collection.id === id) {
+        if (collection.id === idS) {
             res.json(collection);
             return;
         }

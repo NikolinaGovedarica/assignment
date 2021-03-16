@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit{
   title = 'Assignment';
-  collection; 
+  private collection; 
 
   constructor(private service: AppServiceService){}
   ngOnInit(){
@@ -52,5 +52,9 @@ export class AppComponent implements OnInit{
       console.log('Error is ', error);
     }
     )
+  }
+
+  getCollectionData(){
+    return this.collection;
   }
 }

@@ -17,7 +17,8 @@ export class AppServiceService {
   }
 
   getCollectionById(id){
-    return this.http.get('api/getCollectionById/:'+id);
+    console.log('usao u funkciju:',id);
+    return this.http.get('api/getItemById/:'+id);
   }
 
   updateItem(id){
