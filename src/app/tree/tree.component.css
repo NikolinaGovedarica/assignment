@@ -4,8 +4,17 @@
     border-color:rgb(216, 52, 52); 
     border-width: 5px;
 }
+.editPage{
+    padding-left: 10px;
+    padding-top: 100px;
+    border-color:rgb(216, 52, 52); 
+    border-width: 5px;
+}
 .mat-radio-group{
     padding-bottom: 10px;
+}
+.labelForEdit{
+    width:90%;
 }
 
 .searchBox{
@@ -17,7 +26,7 @@
     position: relative;
 }
 
-.btn.btn-primary{
+.btn.btn-primary, .btn-outline-primary{
     width: 120px;
     place-content: center !important;
     align-items: stretch;

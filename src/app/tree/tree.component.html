@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
 <div style="width: 100%; height: 100%;">
-    <span class="border-right" fxFlex="20">
+    <span class="border-right" fxFlex="20" *ngIf="!editIsClicked">
         <div fxLayout="column"  class="mySideBar" style="width: 100%;">
             <mat-radio-group aria-label="Select an option" [(ngModel)]="selection" name="selection">
                 <mat-toolbar-row fxLayoutGap="25px">
@@ -36,7 +36,32 @@
               </mat-tree>
         </div>
     </span>
-    <div  *ngIf="itemClicked" style="padding-left:10px; margin-left:10px; margin-top:120px; flex-direction: column;" name="item" [(ngModel)]="item" fxLayoutAlign="space-around center" value="item" ngDefaultControl fxLayout="column" fxFlex="80" class="contentArea">
+    
+    <form form [formGroup]="artForm" class="border-right" fxFlex="50" *ngIf="editIsClicked" >
+       <div fxLayout="column"  class="editPage" style="width: 100%;"  fxLayoutAlign="space-between center">
+        <mat-form-field  class="labelForEdit">
+          <mat-label>Title</mat-label>
+          <input type="text" formControlName="title" matInput>
+        </mat-form-field>
+        <mat-form-field class="labelForEdit">
+          <mat-label>Image URL</mat-label>
+          <input formControlName="url" matInput>
+        </mat-form-field>
+        <mat-form-field class="labelForEdit">
+          <mat-label>Description</mat-label>
+          <textarea formControlName="description" style="height: 300px;" matInput></textarea>
+        </mat-form-field>
+        <mat-toolbar-row >
+          <button class="btn btn-primary" fxLayout="row" style="margin-left: 25px;" (click)="saveClicked()">
+            Save
+          </button>
+          <button class="btn btn-outline-primary" fxLayout="row"  style="margin-left: 50px;" (click)="previewClicked()">
+            Preview
+          </button>
+        </mat-toolbar-row>
+       </div>
+      </form>
+    <div class="border-bottom" *ngIf="itemClicked" style="padding-left:10px; margin-left:10px; margin-top:120px; flex-direction: column;" name="item" [(ngModel)]="item" fxLayoutAlign="space-around center" value="item" ngDefaultControl fxLayout="column" fxFlex="80" class="contentArea">
         <div fxFlex="40">
             <mat-toolbar-row  style="flex-direction: column;margin-bottom: 160px;">
                 <div fxLayout="row">
@@ -51,10 +76,11 @@
                     <div fxLayout="row">
                         <label style="font-size: large;">{{ item.name }}</label>
                     </div>
-                    <div>
+                    <div *ngIf="!editIsClicked">
                       <button class="btn btn-primary"
                       type="button"
-                      fxLayoutAlign="end"  onClick="window.open('https://github.com/Bubo-DBM/museum-art/wiki/Assignment-details')">
+                      (click)="editClicked()"
+                      fxLayoutAlign="end">
                         Edit
                       </button>
                     </div>

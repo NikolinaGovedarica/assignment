@@ -1,3 +1,4 @@
+import { FormGroup, FormControl } from '@angular/forms';
 import { AppServiceService } from './../app-service.service';
 import { Component, Input} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
@@ -36,6 +37,14 @@ interface Item{
   styleUrls: ['./tree.component.css']
 })
 export class TreeComponent{
+
+  artForm = new FormGroup({
+    title: new FormControl(),
+    description: new FormControl(),
+    url: new FormControl()
+  })
+
+  editIsClicked: boolean;
   selection;
   selections = [{name:'All', value: true},  {name:'Painting', value: false},{name:'Potery', value: false}];
   treeControl: FlatTreeControl<FlatNode>;
@@ -67,6 +76,7 @@ export class TreeComponent{
     this.treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.collection);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     this.getData();
+    this.editIsClicked = false;
   }
 
   getData(){
@@ -156,6 +166,41 @@ export class TreeComponent{
 
     }
   }
+
+  saveClicked(){
+    this.item.name = this.artForm.controls['title'].value;
+    this.item.description = this.artForm.controls['description'].value;
+    this.item.url = this.artForm.controls['url'].value;
+    localStorage.setItem('collection'+this.oldNode.id,JSON.stringify(this.item));
+    this.editIsClicked = false;
+  }
+  previewClicked(){
+    this.item.name = this.artForm.controls['title'].value;
+    this.item.description = this.artForm.controls['description'].value;
+    this.item.url = this.artForm.controls['url'].value;
+  }
+
+  itemForEdit: Item;
+  editClicked(){
+    if(localStorage.getItem("collection"+this.oldNode.id) === null){
+        console.log("nije local storage za by id");
+        this.service.getCollectionById(this.oldNode.id).subscribe((response)=>{
+        localStorage.setItem('collection'+this.oldNode.id,JSON.stringify(response));
+        this.itemForEdit = response as Item;
+        this.editIsClicked = true;
+      },(error)=>{
+        console.log('Error is ', error);
+      })
+    }else{
+      this.itemForEdit = JSON.parse(localStorage.getItem('collection'+this.oldNode.id)) as Item;
+      this.editIsClicked = true;
+    }
+    this.artForm.controls['title'].setValue(this.itemForEdit.name);
+    this.artForm.controls['description'].setValue(this.itemForEdit.description);
+    this.artForm.controls['url'].setValue(this.itemForEdit.url);
+
+  }
+
   oldNode: FlatNode;
   onItemClicked(node){
     console.log(node);
@@ -179,15 +224,15 @@ export class TreeComponent{
         console.log('Error is ', error);
       }
       )
-    }else{
-      this.item = JSON.parse(localStorage.getItem('collection'+node.id)) as Item;
-        console.log('Item', this.item);
-        this.itemClicked = true;
-        //this.nodeClicked.backgroudColor("blue");
-        console.log(node);
-        this.changeColor(node.id);
-        this.oldNode = node as FlatNode;
-    }
+      }else{
+        this.item = JSON.parse(localStorage.getItem('collection'+node.id)) as Item;
+          console.log('Item', this.item);
+          this.itemClicked = true;
+          //this.nodeClicked.backgroudColor("blue");
+          console.log(node);
+          this.changeColor(node.id);
+          this.oldNode = node as FlatNode;
+      }
     
     }
 
