@@ -1,4 +1,4 @@
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { AppServiceService } from './../app-service.service';
 import { Component, Input} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
@@ -37,11 +37,12 @@ interface Item{
   styleUrls: ['./tree.component.css']
 })
 export class TreeComponent{
+   reg = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
-  artForm = new FormGroup({
-    title: new FormControl(),
-    description: new FormControl(),
-    url: new FormControl()
+  artForm = this.fb.group({
+    title: new FormControl([Validators.required, Validators.minLength(5)]),
+    description: new FormControl([Validators.required]),
+    url: new FormControl([Validators.required, Validators.minLength(5), Validators.pattern(this.reg)])
   })
 
   editIsClicked: boolean;
@@ -71,7 +72,7 @@ export class TreeComponent{
   loaded: boolean = false;
   ok: boolean = false;  
 
-  constructor(private service: AppServiceService) {
+  constructor(private service: AppServiceService, private fb: FormBuilder) {
     this.treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
     this.treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.collection);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -104,7 +105,7 @@ export class TreeComponent{
       console.log(this.POTTERY_TREE_NODE);
       console.log(this.PAINTING_TREE_NODE);
     }
-    
+    //this.treeControl.expandAll();
   }
 
    hasChild = (_: number, node: FlatNode) => node.expandable;
@@ -117,6 +118,7 @@ export class TreeComponent{
       this.selections[0].value=true;
       this.selections[1].value=false;
       this.selections[2].value=false;
+      this.treeControl.expandAll();
     }else if (radioValue === 'Painting'){
       this.dataSource.data=this.PAINTING_TREE_NODE;
       this.selections[0].value=false;
@@ -168,12 +170,46 @@ export class TreeComponent{
   }
 
   saveClicked(){
+    console.log(this.artForm.controls);
+
+    console.log(this.artForm.controls.url);
     this.item.name = this.artForm.controls['title'].value;
     this.item.description = this.artForm.controls['description'].value;
     this.item.url = this.artForm.controls['url'].value;
+    this.changeUpdatedItemInCollection();
     localStorage.setItem('collection'+this.oldNode.id,JSON.stringify(this.item));
     this.editIsClicked = false;
+    this.getData();
+    this.treeControl.expandAll();
   }
+  private itemForUpdate: ArtNode;
+
+  changeUpdatedItemInCollection(){
+    this.collection = JSON.parse(localStorage.getItem("collection")) as ArtNode;
+    const collsInCollection: ArtNode[]= this.collection['collection'];
+    console.log(collsInCollection);
+    var index;
+    var index1;
+    for(var coll of collsInCollection){
+      const collInColl: ArtNode[] = coll.collection;
+      for(var c of collInColl){
+        if(c.id === this.oldNode.id){
+          c.name = this.item.name;
+          index = collInColl.indexOf(c);
+          this.itemForUpdate = c;
+          index1 = collsInCollection.indexOf(coll);
+          collInColl[index1] = this.itemForUpdate;
+          collsInCollection[index].collection = collInColl;
+          this.collection.collection = collsInCollection;
+          console.log('poslije update-a:' + JSON.stringify(this.collection));
+          break;
+        }
+      }
+    }
+    
+    localStorage.setItem('collection',JSON.stringify(this.collection));
+  }
+
   previewClicked(){
     this.item.name = this.artForm.controls['title'].value;
     this.item.description = this.artForm.controls['description'].value;
@@ -239,6 +275,9 @@ export class TreeComponent{
   }
   changeColor(id) {
     document.getElementById(id).style.color= 'blue';
+}
+submit(){
+  console.log(this.artForm.value);
 }
   
 }
