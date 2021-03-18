@@ -2,7 +2,7 @@ import { Item } from './../item.interface';
 import { ArtNode } from './../art-node.interface';
 import { AppServiceService } from './../app-service.service';
 import { TreeComponent } from './../tree/tree.component';
-import { FormControl, Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -15,10 +15,14 @@ export class EditComponent implements OnInit {
   static reg = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
   static artForm = new FormGroup({
-    title: new FormControl([Validators.required, Validators.minLength(5)]),
-    description: new FormControl([Validators.required]),
-    url: new FormControl([Validators.required, Validators.minLength(5), Validators.pattern(EditComponent.reg)])
+    title: new FormControl('',[Validators.required, Validators.minLength(5)]),
+    description: new FormControl('',[Validators.minLength(5),Validators.required]),
+    url: new FormControl('',[Validators.required, Validators.pattern(EditComponent.reg)])
   })
+
+  titleFC(): FormControl{
+    return EditComponent.artForm.get('title')['controls'];
+  }
 
   get staticEditIsClicked(){
     return TreeComponent.editIsClicked;

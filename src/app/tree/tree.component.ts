@@ -15,7 +15,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 export class TreeComponent{
    reg = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
-  static editIsClicked: boolean;
+  static editIsClicked: boolean = false;
   selection;
   selections = [{name:'All', value: true},  {name:'Painting', value: false},{name:'Potery', value: false}];
   static treeControl: FlatTreeControl<FlatNode>;

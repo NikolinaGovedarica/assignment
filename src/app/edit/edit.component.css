@@ -15,16 +15,9 @@
 }
 .labelForEdit{
     width:90%;
+    margin-bottom: 20px;
 }
 
-.searchBox{
-    margin-top: 15px;
-    height: 40px;
-    width: 230px;
-    border-radius: 10px;
-    display:inline-block;
-    position: relative;
-}
 
 .btn.btn-primary, .btn-outline-primary{
     width: 120px;

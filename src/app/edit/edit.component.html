@@ -1,22 +1,28 @@
-<form form  [formGroup]="staticArtForm" class="border-right">
+<form [formGroup]="staticArtForm" class="border-right">
         <div fxLayout="column"  class="editPage" style="width: 100%;"  fxLayoutAlign="space-between center">
          <mat-form-field  class="labelForEdit">
            <mat-label>Title</mat-label>
-           <input type="text" formControlName="title" matInput>        
+           <input type="text" formControlName="title" matInput>
+           <mat-error *ngIf="staticArtForm.get('title').touched && !staticArtForm.get('title').valid && staticArtForm.get('title').errors.required">Title is required.</mat-error>
+           <mat-error *ngIf="staticArtForm.get('title').touched && !staticArtForm.get('title').valid && staticArtForm.get('title').errors.minlength">Title must have at least 5 characters.</mat-error>      
          </mat-form-field>
          <mat-form-field class="labelForEdit">
            <mat-label>Image URL</mat-label>
            <input formControlName="url" matInput>
+           <mat-error *ngIf="staticArtForm.get('url').touched && !staticArtForm.get('url').valid && staticArtForm.get('url').errors.required">URL is required.</mat-error>
+           <mat-error *ngIf="staticArtForm.get('url').touched && !staticArtForm.get('url').valid && staticArtForm.get('url').errors.pattern">URL must be in proper format.</mat-error>
          </mat-form-field>
          <mat-form-field class="labelForEdit">
            <mat-label>Description</mat-label>
            <textarea formControlName="description" style="height: 300px;" matInput></textarea>
+           <mat-error *ngIf="staticArtForm.get('description').touched && !staticArtForm.get('description').valid && staticArtForm.get('description').errors.required">Description is required.</mat-error>      
+           <mat-error *ngIf="staticArtForm.get('description').touched && !staticArtForm.get('description').valid && staticArtForm.get('description').errors.minlength">Description must have at least 5 characters.</mat-error>      
          </mat-form-field>
          <mat-toolbar-row >
-           <button class="btn btn-primary" fxLayout="row" style="margin-left: 25px;" (click)="saveClicked()">
+           <button class="btn btn-primary" fxLayout="row" style="margin-left: 25px;" (click)="saveClicked()" [disabled]="!staticArtForm.valid">
              Save
            </button>
-           <button class="btn btn-outline-primary" fxLayout="row"  style="margin-left: 50px;" (click)="previewClicked()">
+           <button class="btn btn-outline-primary" fxLayout="row"  style="margin-left: 50px;" (click)="previewClicked()" [disabled]="!staticArtForm.valid">
              Preview
            </button>
          </mat-toolbar-row>
