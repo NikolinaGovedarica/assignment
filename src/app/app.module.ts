@@ -14,12 +14,16 @@ import { MatInputModule } from '@angular/material/input';
 import {MatTreeModule} from '@angular/material/tree';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PreviewComponent } from './preview/preview.component';
+import { EditComponent } from './edit/edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    TreeComponent
+    TreeComponent,
+    PreviewComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,

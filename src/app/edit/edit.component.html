@@ -1,0 +1,24 @@
+<form form  [formGroup]="staticArtForm" class="border-right">
+        <div fxLayout="column"  class="editPage" style="width: 100%;"  fxLayoutAlign="space-between center">
+         <mat-form-field  class="labelForEdit">
+           <mat-label>Title</mat-label>
+           <input type="text" formControlName="title" matInput>        
+         </mat-form-field>
+         <mat-form-field class="labelForEdit">
+           <mat-label>Image URL</mat-label>
+           <input formControlName="url" matInput>
+         </mat-form-field>
+         <mat-form-field class="labelForEdit">
+           <mat-label>Description</mat-label>
+           <textarea formControlName="description" style="height: 300px;" matInput></textarea>
+         </mat-form-field>
+         <mat-toolbar-row >
+           <button class="btn btn-primary" fxLayout="row" style="margin-left: 25px;" (click)="saveClicked()">
+             Save
+           </button>
+           <button class="btn btn-outline-primary" fxLayout="row"  style="margin-left: 50px;" (click)="previewClicked()">
+             Preview
+           </button>
+         </mat-toolbar-row>
+        </div>
+</form>

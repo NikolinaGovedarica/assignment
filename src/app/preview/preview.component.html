@@ -1,0 +1,30 @@
+<div class="border-bottom" *ngIf="staticItemClicked" style="width:100%; height:100%; padding-left:10px; margin-left:10px; margin-top:120px; flex-direction: column;" name="staticItem" [(ngModel)]="staticItem" fxLayoutAlign="space-around center" value="staticItem" ngDefaultControl fxLayout="column"  class="contentArea">
+    <div fxFlex="40">
+        <mat-toolbar-row  style="flex-direction: column;margin-bottom: 160px;">
+            <div fxLayout="row">
+                <img src="{{staticItem.url}}" style="height:320px ; width:250px; position: center;" class="md-card-image">
+            </div>
+        </mat-toolbar-row>
+    </div>
+    
+    <div fxFlex="60">
+        <mat-toolbar-row>
+            <mat-toolbar-row fxLayoutAlign="space-between center">
+                <div fxLayout="row">
+                    <label style="font-size: large;">{{ staticItem.name }}</label>
+                </div>
+                <div *ngIf="!staticEditIsClicked">
+                  <button class="btn btn-primary"
+                  type="button"
+                  (click)="editClicked()"
+                  fxLayoutAlign="end">
+                    Edit
+                  </button>
+                </div>
+              </mat-toolbar-row>
+        </mat-toolbar-row>
+        <div fxLayout="row" style="margin-top: 30px;text-align: justify; margin-right: 30px;">
+            <label>{{staticItem.description}}</label>
+        </div>
+    </div>
+</div>

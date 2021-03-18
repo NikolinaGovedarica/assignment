@@ -1,3 +1,4 @@
+import { TreeComponent } from './tree/tree.component';
 import { AppServiceService } from './app-service.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -41,6 +42,9 @@ export class AppComponent implements OnInit{
       this.collection = localStorage.getItem("collection");
     }
     
+  }
+  get staticEditIsClicked(){
+    return TreeComponent.editIsClicked;
   }
 
   getCollectionByIdFromAPI(id){
