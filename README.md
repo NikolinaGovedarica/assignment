@@ -1,3 +1,10 @@
+Filtering is not working properly. Some other things that I didn't have time for: ErrorHandler, making an app responsive on all type of devices, some small fixes and bugs.
+
+AngularMaterial, Bootstrap, Express API, CLI, CDK, FONT AWESOME.
+
+Express api running on port 3000, and Angular app on 4200. Paths from angular app eg. /api/getCollection will be transformed to /getCollection.
+
+
 # Assignment
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
