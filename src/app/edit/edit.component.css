@@ -10,9 +10,7 @@
     border-color:rgb(216, 52, 52); 
     border-width: 5px;
 }
-.mat-radio-group{
-    padding-bottom: 10px;
-}
+
 .labelForEdit{
     width:90%;
     margin-bottom: 20px;

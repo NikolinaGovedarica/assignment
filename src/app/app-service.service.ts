@@ -21,6 +21,10 @@ export class AppServiceService {
     return this.http.get('api/getItemById/:'+id);
   }
 
+  getItemsByType(type){
+    return this.http.get('api/getItemsByType/:'+type);
+  }
+
   updateItem(id){
     return null;
   }

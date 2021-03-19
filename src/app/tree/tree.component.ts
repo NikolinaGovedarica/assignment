@@ -3,7 +3,7 @@ import { FlatNode } from './../flat-node.interface';
 import { Item } from '../item.interface';
 import { FormBuilder } from '@angular/forms';
 import { AppServiceService } from './../app-service.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { FlatTreeControl } from '@angular/cdk/tree';
 
@@ -12,7 +12,15 @@ import { FlatTreeControl } from '@angular/cdk/tree';
   templateUrl: './tree.component.html',
   styleUrls: ['./tree.component.css']
 })
-export class TreeComponent{
+export class TreeComponent implements OnInit{
+
+  ngOnInit(){
+    TreeComponent.treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
+    this.treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.collection);
+    TreeComponent.dataSource = new MatTreeFlatDataSource(TreeComponent.treeControl, this.treeFlattener);
+    this.getData();
+    TreeComponent.editIsClicked = false;
+  }
    reg = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
   static editIsClicked: boolean = false;
@@ -23,12 +31,12 @@ export class TreeComponent{
   static dataSource: MatTreeFlatDataSource<ArtNode, FlatNode>;
   static collection: ArtNode;
   static TREE_NODE: ArtNode[];
-  static ALL_TREE_NODE: ArtNode[];
   static PAINTING_TREE_NODE: ArtNode[];
   static POTTERY_TREE_NODE: ArtNode[];
   static itemClicked:boolean = false;
 
   static item: Item;
+  static first: boolean =  false;
 
   get staticEditIsClicked() {
     return TreeComponent.editIsClicked;
@@ -47,91 +55,79 @@ export class TreeComponent{
   ok: boolean = false;  
 
   constructor(private service: AppServiceService, private fb: FormBuilder) {
-    TreeComponent.treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
-    this.treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.collection);
-    TreeComponent.dataSource = new MatTreeFlatDataSource(TreeComponent.treeControl, this.treeFlattener);
-    this.getData();
-    TreeComponent.editIsClicked = false;
+    
   }
 
   getData(){
     if(localStorage.getItem("collection") === null){
       this.service.getCollection().subscribe((response)=>{
+
         TreeComponent.collection = response as ArtNode;
         TreeComponent.TREE_NODE = [TreeComponent.collection];
-        TreeComponent.ALL_TREE_NODE = [TreeComponent.collection];
-        this.takePotteries(TreeComponent.TREE_NODE);
-        this.takePaintings(TreeComponent.TREE_NODE);
+        
         TreeComponent.dataSource.data=TreeComponent.TREE_NODE;
-        console.log(TreeComponent.POTTERY_TREE_NODE);
-        console.log(TreeComponent.PAINTING_TREE_NODE);
+
         localStorage.setItem("collection",JSON.stringify(response));
       }, (error)=>{
         console.log('Error is ', error);
       })
     }else{
       TreeComponent.collection = JSON.parse(localStorage.getItem("collection")) as ArtNode;
+
       TreeComponent.TREE_NODE = [TreeComponent.collection];
-      TreeComponent.ALL_TREE_NODE = [TreeComponent.collection];
-      this.takePotteries(TreeComponent.TREE_NODE);
-      this.takePaintings(TreeComponent.TREE_NODE);
+
       TreeComponent.dataSource.data=TreeComponent.TREE_NODE;
-      console.log(TreeComponent.POTTERY_TREE_NODE);
-      console.log(TreeComponent.PAINTING_TREE_NODE);
     }
+    
   }
 
    hasChild = (_: number, node: FlatNode) => node.expandable;
 
-  takePotteries(TREE_NODE: ArtNode[]){
-    for(let data of TREE_NODE){
-      if(!(data.type === 'potery') && data.collection != null){
-        this.takePotteries(data.collection as ArtNode[]);
-      }else{
-        if(TreeComponent.POTTERY_TREE_NODE === undefined){
-          TreeComponent.POTTERY_TREE_NODE = [data];
-        }else{
-            TreeComponent.POTTERY_TREE_NODE.push(data);
-          
-        }     
-      }
-    }
+  takePotteries(){
+    this.service.getItemsByType('potery').subscribe((response)=>{
+      console.log('potery: '+response);
+      TreeComponent.POTTERY_TREE_NODE = response as ArtNode[];   
+    }, (error)=>{
+      console.log('Error is ', error);
+    })
   }
 
-  takePaintings(TREE_NODE: ArtNode[]){
-    for(let data of TREE_NODE){
-      if(!(data.type === 'painting')  && data.collection != null){
-        this.takePaintings(data.collection as ArtNode[]);
-      }else{
-        if(TreeComponent.PAINTING_TREE_NODE === undefined){
-          TreeComponent.PAINTING_TREE_NODE = [data];
-        }else{
-            TreeComponent.PAINTING_TREE_NODE.push(data);
-        }
-        
-      }
-
-    }
+  takePaintings(){
+    this.service.getItemsByType('painting').subscribe((response)=>{
+      TreeComponent.PAINTING_TREE_NODE = response as ArtNode[];   
+    }, (error)=>{
+      console.log('Error is ', error);
+    })
   }
 
   onSelectionChange($event): void {
     console.log($event);
    let radioValue = event.target['value'];
    if(radioValue === 'All'){
-     TreeComponent.dataSource.data=TreeComponent.ALL_TREE_NODE;
+     TreeComponent.dataSource.data=TreeComponent.TREE_NODE;
      this.selections[0].value=true;
      this.selections[1].value=false;
      this.selections[2].value=false;
      TreeComponent.treeControl.expandAll();
    }else if (radioValue === 'Painting'){
-    this.takePaintings(TreeComponent.TREE_NODE);
-     TreeComponent.dataSource.data=TreeComponent.PAINTING_TREE_NODE;
+    this.service.getItemsByType('painting').subscribe((response)=>{
+      TreeComponent.PAINTING_TREE_NODE = response as ArtNode[]; 
+      TreeComponent.dataSource.data=TreeComponent.PAINTING_TREE_NODE;  
+    }, (error)=>{
+      console.log('Error is ', error);
+    })
      this.selections[0].value=false;
      this.selections[1].value=false;
      this.selections[2].value=true;
    }else{
-     this.takePotteries(TreeComponent.TREE_NODE);
-     TreeComponent.dataSource.data=TreeComponent.POTTERY_TREE_NODE;
+    this.service.getItemsByType('potery').subscribe((response)=>{
+      console.log('potery: '+response);
+      TreeComponent.POTTERY_TREE_NODE = response as ArtNode[];
+      TreeComponent.dataSource.data=TreeComponent.POTTERY_TREE_NODE;
+   
+    }, (error)=>{
+      console.log('Error is ', error);
+    })
      this.selections[0].value=false;
      this.selections[1].value=true;
      this.selections[2].value=false;

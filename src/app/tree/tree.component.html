@@ -9,8 +9,10 @@
             </mat-radio-group>
             
            <div class="searchContainer">
-                <input class="searchBox" type="search" name="search" >
-                <i class="fa fa-search" style="padding-left: 2px;"></i>
+            <mat-form-field class="labelForEdit">
+                <input  type="search" name="search" matInput placeholder="Search">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
             </div>
             <mat-tree #tree  [dataSource]="staticDataSource" [treeControl]="staticTreeControl">
                 <mat-tree-node *matTreeNodeDef="let node"  matTreeNodePadding >

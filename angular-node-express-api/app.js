@@ -27,6 +27,21 @@ app.get('/getItemById/:id', (req, res)=>{
     res.status(404).send('Collection not found');
 });
 
+app.get('/getItemsByType/:type', (req, res)=>{
+    var type = req.params.type.toString();
+    var items = [];
+    var typeTemp = type.substr(1,type.length);
+    var data= loadJSON('../collection.json')['collection'];
+    for (let collection of data) {
+        if (collection.type === typeTemp) {
+            items.push(collection);
+        }
+    }
+    res.json(items);
+    return;
+    res.status(404).send('Collection not found');
+});
+
 app.listen(3000, (req, res)=>{
     console.log('Express API running on port 3000');
 });

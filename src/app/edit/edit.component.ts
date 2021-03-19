@@ -77,6 +77,7 @@ export class EditComponent implements OnInit {
     TreeComponent.editIsClicked = false;
     TreeComponent.treeControl.expandAll();
     localStorage.setItem('collection',JSON.stringify(TreeComponent.collection));
+    TreeComponent.itemClicked = false;
   }
 
   previewClicked(){
